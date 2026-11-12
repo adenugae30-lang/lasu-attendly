@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - LASU Attendly</title>
+    <!-- Google Fonts & FontAwesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        aside {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .sidebar-top {
+            padding: 24px 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+
+        .brand i {
+            font-size: 26px;
+            color: #008751;
+        }
+
+        .brand h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0b2e13;
+        }
+
+        .brand span {
+            color: #008751;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #e6f4ed;
+            color: #008751;
+        }
+
+        .sidebar-bottom {
+            padding: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 14px;
+            background: none;
+            border: none;
+            color: #d93838;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #fde8e8;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 18px 30px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .content-body {
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #008751;
+            box-shadow: 0 0 0 3px rgba(0, 135, 81, 0.1);
+        }
+
+        .optional-text {
+            font-size: 11px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            background-color: #008751;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            background-color: #006e41;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="sidebar-top">
+            <div class="brand">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <h1>LASU <span>Attendly</span></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a id="dashboard-link" href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard Home</a></li>
+                <li><a href="settings.html" class="active"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="login.html" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Section -->
+    <main>
+        <header>
+            <h2>Account Settings</h2>
+            <div class="user-profile">
+                <div style="background:#008751; color:white; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-weight:600;" id="user-initials">U</div>
+                <span id="display-username">User</span>
+            </div>
+        </header>
+
+        <div class="content-body">
+            
+            <!-- Edit Profile Card -->
+            <div class="card">
+                <h3>Edit Profile Information</h3>
+                <form onsubmit="saveProfile(event)">
+                    <div class="form-group">
+                        <label for="usernameInput">Username</label>
+                        <input type="text" id="usernameInput" class="form-control" placeholder="Enter new username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailInput">Email Address <span class="optional-text">(Optional)</span></label>
+                        <input type="email" id="emailInput" class="form-control" placeholder="e.g., name@lasu.edu.ng">
+                    </div>
+
+                    <button type="submit" class="btn"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+                </form>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="card">
+                <h3>Change Password</h3>
+                <form onsubmit="changePassword(event)">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Enter new password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password" required>
+                    </div>
+
+                    <button type="submit" class="btn"><i class="fa-solid fa-key"></i> Update Password</button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Extract username from URL and populate fields
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+            
+            if (username && username.trim() !== "") {
+                const decodedUser = decodeURIComponent(username);
+                document.getElementById('display-username').innerText = decodedUser;
+                document.getElementById('user-initials').innerText = decodedUser.substring(0, 2).toUpperCase();
+                document.getElementById('usernameInput').value = decodedUser;
+                
+                // Keep username tracked in the back-to-dashboard link
+                document.getElementById('dashboard-link').href = `dashboard.html?username=${encodeURIComponent(decodedUser)}`;
+            } else {
+                document.getElementById('display-username').innerText = "Guest User";
+                document.getElementById('user-initials').innerText = "GU";
+            }
+        });
+
+        function saveProfile(event) {
+            event.preventDefault();
+            const newUsername = document.getElementById('usernameInput').value;
+            const email = document.getElementById('emailInput').value;
+            
+            // Update UI view header dynamically
+            document.getElementById('display-username').innerText = newUsername;
+            document.getElementById('user-initials').innerText = newUsername.substring(0, 2).toUpperCase();
+            document.getElementById('dashboard-link').href = `dashboard.html?username=${encodeURIComponent(newUsername)}`;
+
+            alert('Profile updated successfully!');
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                alert('New passwords do not match!');
+                return;
+            }
+
+            alert('Password changed successfully!');
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>
