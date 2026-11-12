@@ -1,1 +1,744 @@
-iiii
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LASU Attendly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 110px; /* Space for the floating dock */
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            background: #ffffff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .brand i {
+            color: #008751;
+            font-size: 24px;
+        }
+
+        .brand span {
+            color: #008751;
+        }
+
+        /* Top Right User Info */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #eef7f3;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #cce7db;
+        }
+
+        .nav-right i {
+            color: #008751;
+            font-size: 15px;
+        }
+
+        .nav-right span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0b2e13;
+        }
+
+        /* Main Dashboard Grid Container */
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eaeaea;
+        }
+
+        .card-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Left Column: Add Students Form */
+        .add-student-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #008751;
+            box-shadow: 0 0 0 3px rgba(0, 135, 81, 0.1);
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background-color: #008751;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 6px;
+        }
+
+        .btn-add:hover {
+            background-color: #006e41;
+            transform: translateY(-1px);
+        }
+
+        /* Right Column: Attendance Table & Results Hub */
+        .attendance-hub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Present / Absent Tick Buttons */
+        .status-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-status {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .btn-status.present.active {
+            background-color: #008751;
+            color: #ffffff;
+            border-color: #008751;
+            box-shadow: 0 2px 5px rgba(0, 135, 81, 0.25);
+        }
+
+        .btn-status.absent.active {
+            background-color: #d93025;
+            color: #ffffff;
+            border-color: #d93025;
+            box-shadow: 0 2px 5px rgba(217, 48, 37, 0.25);
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px;
+        }
+
+        .btn-delete:hover {
+            color: #d93025;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Results & Print Controls Bar */
+        .bottom-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #eaeaea;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .stats-badge-group {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-item span { font-weight: 700; }
+        .stat-item.total span { color: #1e293b; }
+        .stat-item.present span { color: #008751; }
+        .stat-item.absent span { color: #d93025; }
+
+        .action-btns-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            padding: 9px 16px;
+            background-color: #ffffff;
+            color: #008751;
+            border: 1px solid #008751;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #eef7f3;
+        }
+
+        .btn-print {
+            padding: 9px 16px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-print:hover {
+            background-color: #333333;
+        }
+
+        /* Official Results Report Modal/Box */
+        .results-modal {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .results-modal.show {
+            display: block;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .results-table th, .results-table td {
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        /* Unique Floating Bottom Dock for Settings & Logout */
+        .floating-dock {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 24, 28, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 12px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            z-index: 999;
+        }
+
+        .dock-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dock-item i {
+            font-size: 15px;
+            transition: transform 0.25s ease;
+        }
+
+        .dock-item.settings-btn:hover {
+            background: #008751;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 135, 81, 0.4);
+        }
+
+        .dock-item.settings-btn:hover i {
+            transform: rotate(90deg);
+        }
+
+        .dock-divider {
+            width: 1px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .dock-item.logout-btn {
+            color: #ff8a80;
+        }
+
+        .dock-item.logout-btn:hover {
+            background: #d93025;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 48, 37, 0.4);
+        }
+
+        .dock-item.logout-btn:hover i {
+            transform: translateX(2px);
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Clean Print / PDF Layout */
+        @media print {
+            .navbar, .left-column, .bottom-actions, .btn-delete, .no-print, .floating-dock {
+                display: none !important;
+            }
+            body {
+                background: #fff;
+                padding-bottom: 0;
+            }
+            .main-container {
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+            .card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            .btn-status:not(.active) {
+                display: none;
+            }
+            .btn-status.active {
+                border: none;
+                padding: 0;
+                background: none !important;
+                color: #000 !important;
+                font-weight: 700;
+            }
+            .results-modal {
+                display: block !important;
+                border: 1px solid #000;
+                background: #fff;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div>LASU <span>Attendly</span></div>
+        </div>
+
+        <!-- Top Right Signed-In User -->
+        <div class="nav-right">
+            <i class="fa-solid fa-circle-user"></i>
+            <span id="displayUsername">User</span>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Grid -->
+    <div class="main-container">
+
+        <!-- Left Column: Add Students Form -->
+        <div class="card left-column">
+            <div class="card-header">
+                <h2>Add Student</h2>
+                <p>Register student for attendance tracking</p>
+            </div>
+            <form class="add-student-form" onsubmit="addStudent(event)">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="e.g. Adebayo Tunde" required>
+                </div>
+                <div class="form-group">
+                    <label for="matricNumber">Matric Number</label>
+                    <input type="text" id="matricNumber" class="form-control" placeholder="e.g. 210599001" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseCode">Course Code</label>
+                    <input type="text" id="courseCode" class="form-control" placeholder="e.g. CSC 301" required>
+                </div>
+                <button type="submit" class="btn-add">
+                    <i class="fa-solid fa-user-plus"></i> Add to Sheet
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Column: Attendance Sheet & Results Hub -->
+        <div class="card">
+            <div class="attendance-hub-header">
+                <div>
+                    <h2>Attendance Sheet</h2>
+                    <span id="currentDate" style="font-size: 12px; color: #666;"></span>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Full Name</th>
+                            <th>Matric Number</th>
+                            <th>Course</th>
+                            <th>Status</th>
+                            <th class="no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody"></tbody>
+                </table>
+                <div id="emptyMessage" class="empty-state">
+                    No students added yet. Fill out the form on the left to begin.
+                </div>
+            </div>
+
+            <!-- Summary & Action Bar -->
+            <div class="bottom-actions">
+                <div class="stats-badge-group">
+                    <div class="stat-item total">Total: <span id="totalCount">0</span></div>
+                    <div class="stat-item present">Present: <span id="presentCount">0</span></div>
+                    <div class="stat-item absent">Absent: <span id="absentCount">0</span></div>
+                </div>
+
+                <div class="action-btns-group">
+                    <button type="button" class="btn-secondary" onclick="toggleResults()">
+                        <i class="fa-solid fa-chart-pie"></i> View Results
+                    </button>
+                    <button type="button" class="btn-print" onclick="printPDFResults()">
+                        <i class="fa-solid fa-file-pdf"></i> Print PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Results Report Box -->
+            <div class="results-modal" id="resultsModal">
+                <h3 style="font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;">Official Attendance Summary Report</h3>
+                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Lagos State University</p>
+                <div style="overflow-x: auto;">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Full Name</th>
+                                <th>Matric Number</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Unique Floating Bottom Dock for Settings & Logout -->
+    <div class="floating-dock">
+        <a href="settings.html" class="dock-item settings-btn">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+        <div class="dock-divider"></div>
+        <a href="login.html" class="dock-item logout-btn" onclick="handleLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <script>
+        // 1. Read username from URL first, then fallback to localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const userFromUrl = urlParams.get('username');
+        let savedUser = null;
+
+        try {
+            if (userFromUrl) {
+                localStorage.setItem('lasu_user', userFromUrl);
+            }
+            savedUser = localStorage.getItem('lasu_user');
+        } catch (e) {}
+
+        const activeUser = userFromUrl || savedUser || 'Guest';
+        document.getElementById('displayUsername').textContent = activeUser;
+
+        // Display today's date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-GB', {
+            weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        function handleLogout() {
+            try {
+                localStorage.removeItem('lasu_user');
+            } catch (e) {}
+        }
+
+        // 2. Attendance Table State & Logic
+        let students = [];
+
+        function addStudent(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('fullName').value.trim();
+            const matricNumber = document.getElementById('matricNumber').value.trim();
+            const courseCode = document.getElementById('courseCode').value.trim().toUpperCase();
+
+            students.push({
+                id: Date.now(),
+                fullName,
+                matricNumber,
+                courseCode,
+                status: 'Present'
+            });
+
+            document.getElementById('fullName').value = '';
+            document.getElementById('matricNumber').value = '';
+            document.getElementById('courseCode').value = '';
+
+            renderTable();
+            updateSummary();
+        }
+
+        function setStatus(id, newStatus) {
+            students = students.map(student =>
+                student.id === id ? { ...student, status: newStatus } : student
+            );
+            renderTable();
+            updateSummary();
+        }
+
+        function deleteStudent(id) {
+            students = students.filter(student => student.id !== id);
+            renderTable();
+            updateSummary();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('studentTableBody');
+            const emptyMessage = document.getElementById('emptyMessage');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                emptyMessage.style.display = 'block';
+                return;
+            }
+
+            emptyMessage.style.display = 'none';
+
+            students.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${student.fullName}</strong></td>
+                    <td>${student.matricNumber}</td>
+                    <td>${student.courseCode}</td>
+                    <td>
+                        <div class="status-actions">
+                            <button type="button" 
+                                class="btn-status present ${student.status === 'Present' ? 'active' : ''}" 
+                                onclick="setStatus(${student.id}, 'Present')">
+                                Present
+                            </button>
+                            <button type="button" 
+                                class="btn-status absent ${student.status === 'Absent' ? 'active' : ''}" 
+                                onclick="setStatus(${student.id}, 'Absent')">
+                                Absent
+                            </button>
+                        </div>
+                    </td>
+                    <td class="no-print">
+                        <button type="button" class="btn-delete" onclick="deleteStudent(${student.id})" title="Remove">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 3. View & Print PDF Results Logic
+        function updateSummary() {
+            const total = students.length;
+            const present = students.filter(s => s.status === 'Present').length;
+            const absent = students.filter(s => s.status === 'Absent').length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('presentCount').textContent = present;
+            document.getElementById('absentCount').textContent = absent;
+
+            const resultsTbody = document.getElementById('resultsTableBody');
+            resultsTbody.innerHTML = '';
+
+            if (total === 0) {
+                resultsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888;">No attendance records available.</td></tr>`;
+                return;
+            }
+
+            students.forEach((student, index) => {
+                const badgeColor = student.status === 'Present' ? '#008751' : '#d93025';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${student.fullName}</strong></td>
+                    <td>${student.matricNumber}</td>
+                    <td>${student.courseCode}</td>
+                    <td><span style="color: ${badgeColor}; font-weight: 600;">${student.status}</span></td>
+                `;
+                resultsTbody.appendChild(tr);
+            });
+        }
+
+        function toggleResults() {
+            updateSummary();
+            const modal = document.getElementById('resultsModal');
+            modal.classList.toggle('show');
+            if (modal.classList.contains('show')) {
+                modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function printPDFResults() {
+            updateSummary();
+            const modal = document.getElementById('resultsModal');
+            modal.classList.add('show');
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+    </script>
+
+</body>
+</html>
